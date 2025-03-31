@@ -1,0 +1,64 @@
+name: Tounde Chocolatine
+run-name: ${{ github.actor }} is learning GitHub Actions
+on:
+  push:
+    branches-ignore:
+      - "ga-ignore-"
+  pull_request:
+    branches-ignore:
+      - "ga-ignore-"
+env:
+    MIRROR_URL: "https://github.com/EpitechPGEPromo2029/B-DOP-200-COT-2-1-chocolatine-tounde.karim.git"
+    EXECUTABLES: "../../SHELL/B-PSU-200-COT-2-1-minishell2-tounde.karim/mysh"
+jobs:
+   check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out the repository to the relevant branch
+        uses: actions/checkout@v4
+   check_coding_style:
+    needs:     check
+    runs-on:   ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - name: check out the repository to the relevant branch
+        uses: actions/checkout@v4
+      - name: runs the coding style checker script and generates a coding style reports log
+        run:  check.sh $(pwd) $(pwd)
+   check_program_compilation:
+    needs: check_coding_style
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker
+    timeout-minutes: 2
+    steps:
+      - name: check out the repository to the relevant branch
+        uses: actions/checkout@v4
+      - name: Compilation of a program
+        run: make
+      - name: Clean
+        run: make clean
+   run_tests:
+    needs: check_program_compilation
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker
+    timeout-minutes: 2
+    steps:
+      - name: check out the repository to the relevant branch
+        uses: actions/checkout@v4
+      - name: Run the run tests command to make unit_tests
+        run: make tests_run
+   push_mirror:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out the repository to the relevant branch 
+        uses: actions/checkout@v4
+      - name: Mirror Repository
+        uses:  pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: MIRROR_URL
+          ssh_private_key:
+            ${{ secrets.tounde_secret}}
+
+
+      
