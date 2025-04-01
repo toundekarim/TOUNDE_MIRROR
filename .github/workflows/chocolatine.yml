@@ -8,7 +8,7 @@ on:
     branches-ignore:
       - "ga-ignore-"
 env:
-    MIRROR_URL: "https://github.com/EpitechPGEPromo2029/B-DOP-200-COT-2-1-chocolatine-tounde.karim.git"
+    MIRROR_URL: "github.com/EpitechPGEPromo2029/B-DOP-200-COT-2-1-chocolatine-tounde.karim.git"
     EXECUTABLES: "../../SHELL/B-PSU-200-COT-2-1-minishell2-tounde.karim/mysh"
 jobs:
    check:
