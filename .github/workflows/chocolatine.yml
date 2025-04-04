@@ -1,4 +1,4 @@
-name: Tounde Chocolatine
+name: Tounde's Chocolatine
 run-name: ${{ github.actor }} is learning GitHub Actions
 on:
   push:
@@ -8,28 +8,35 @@ on:
     branches-ignore:
       - "ga-ignore-"
 env:
-    MIRROR_URL: "github.com/EpitechPGEPromo2029/B-DOP-200-COT-2-1-chocolatine-tounde.karim.git"
-    EXECUTABLES: "../../SHELL/B-PSU-200-COT-2-1-minishell2-tounde.karim/mysh"
+    MIRROR_URL: "https://github.com/EpitechPGEPromo2029/B-DOP-200-COT-2-1-chocolatine-tounde.karim.git"
+    EXECUTABLES:  "107transfer"
 jobs:
    check:
     runs-on: ubuntu-latest
     steps:
       - name: check out the repository to the relevant branch
         uses: actions/checkout@v4
+
    check_coding_style:
-    needs:     check
+    needs: check
     runs-on:   ubuntu-latest
     container: ghcr.io/epitech/coding-style-checker:latest
     steps:
       - name: check out the repository to the relevant branch
         uses: actions/checkout@v4
       - name: runs the coding style checker script and generates a coding style reports log
-        run:  check.sh $(pwd) $(pwd)
+        run: |
+         check.sh $(pwd) $(pwd)
+         if [-s coding-style-reports.log ]; then
+         cat coding-style-reports.log
+         exit 1
+         fi
+
    check_program_compilation:
     needs: check_coding_style
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
-    timeout-minutes: 2
+     #timeout-minutes:2
     steps:
       - name: check out the repository to the relevant branch
         uses: actions/checkout@v4
@@ -41,24 +48,23 @@ jobs:
     needs: check_program_compilation
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
-    timeout-minutes: 2
     steps:
       - name: check out the repository to the relevant branch
         uses: actions/checkout@v4
       - name: Run the run tests command to make unit_tests
         run: make tests_run
+        timeout-minutes: 2
+
    push_mirror:
     needs: run_tests
     runs-on: ubuntu-latest
     steps:
-      - name: check out the repository to the relevant branch 
+      - name: check out the repository to the relevant branch
         uses: actions/checkout@v4
       - name: Mirror Repository
         uses:  pixta-dev/repository-mirroring-action@v1
         with:
-          target_repo_url: MIRROR_URL
+          target_repo_url:
+            ${{env.MIRROR_URL}}
           ssh_private_key:
-            ${{ secrets.tounde_secret}}
-
-
-      
+            ${{ secrets.TOUNDE_SECRET}}
